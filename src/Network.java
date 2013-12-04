@@ -1,21 +1,79 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.EigenDecomposition;
+import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
 public class Network {
 	private int numberOfNodes;
+
 	private int numberOfEdges;
 	private RealMatrix adjacencyMatrix;
 	private HashMap<Integer, Node> nodeMap;
 	
+	public int getNumberOfNodes() {
+		return numberOfNodes;
+	}
+
+
+
+	public void setNumberOfNodes(int numberOfNodes) {
+		this.numberOfNodes = numberOfNodes;
+	}
+
+
+
+	public int getNumberOfEdges() {
+		return numberOfEdges;
+	}
+
+
+
+	public void setNumberOfEdges(int numberOfEdges) {
+		this.numberOfEdges = numberOfEdges;
+	}
+
+
+
+	public RealMatrix getAdjacencyMatrix() {
+		return adjacencyMatrix;
+	}
+
+
+
+	public void setAdjacencyMatrix(RealMatrix adjacencyMatrix) {
+		this.adjacencyMatrix = adjacencyMatrix;
+	}
+
+
+
+	public HashMap<Integer, Node> getNodeMap() {
+		return nodeMap;
+	}
+
+
+
+	public void setNodeMap(HashMap<Integer, Node> nodeMap) {
+		this.nodeMap = nodeMap;
+	}
+
+
+
+	
 	public Network(String filename) throws IOException{
 		nodeMap = new HashMap<Integer, Node>();
 		readNetwork(filename);
+		
 	}
+	
+	
 	
 	public void readNetwork(String filename) throws IOException{
 		BufferedReader br = new BufferedReader(new FileReader(filename));
@@ -37,10 +95,22 @@ public class Network {
 			Node second;
 			if(!nodeMap.containsKey(node1)) {
 				first = new Node(node1);
+				first.setNodeInfected(false);
+				first.addNeighbor(node2);
+				nodeMap.put(node1, first);
+			}else{
+				first = nodeMap.get(node1);
+				first.addNeighbor(node2);
 				nodeMap.put(node1, first);
 			}
 			if(!nodeMap.containsKey(node2)) {
 				second = new Node(node2);
+				second.setNodeInfected(false);
+				second.addNeighbor(node1);
+				nodeMap.put(node2, second);
+			}else{
+				second = nodeMap.get(node2);
+				second.addNeighbor(node1);
 				nodeMap.put(node2, second);
 			}
 		}
@@ -49,5 +119,20 @@ public class Network {
 		System.out.println(adjacencyMatrix.getEntry(0, 1));
 		br.close();
 	}
+	
+	public void storeNode(Node cur){
+		nodeMap.put(cur.getNodeId(), cur);
+	}
+	
+public void printEigenvalues(){
+		
+		//RealMatrix matrix = MatrixUtils.createRealMatrix(mat);
+		EigenDecomposition ed = new EigenDecomposition(adjacencyMatrix);
+		double [] eigValues = ed.getRealEigenvalues();
+		for (int i = 0; i< eigValues.length; i++){
+			System.out.println("eigValue [" + i + "] = " + eigValues[i] );
+		}
+	}
+
 
 }

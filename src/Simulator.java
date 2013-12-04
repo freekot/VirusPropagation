@@ -14,6 +14,7 @@ public class Simulator {
 	static double delta;
 	static double numberOfVaccines;
 	private static BufferedReader in;
+	private static int numberOfInfected=0;
 	
 	/**
 	 * @param args
@@ -33,7 +34,11 @@ public class Simulator {
 		//Populate the Adjacency Matrix and create "Nodes"
 		Network net = new Network (netFileName);
 		
+		//net.printEigenvalues();
+		setInfectedNodes(net);
 		runSimulation(net);
+		
+		
 
 	}
 	
@@ -58,21 +63,52 @@ public class Simulator {
 		tokens = line.split(" ");
 		numberOfVaccines = Double.parseDouble(tokens[2]);
 		
+		//Read in the number of steps
+		line = in.readLine();
+		tokens = line.split(" ");
+		numberOfSteps = Integer.parseInt(tokens[2]);
+		
 		in.close();
 	}
 	
 	private static void runSimulation(Network net){
 		Node currentNode;
-
 		for (int i = 0; i<numberOfSteps; i++){
 			HashMap<Integer, Node> current = net.getNodeMap();
 			Iterator it  = current.entrySet().iterator();
 			while (it.hasNext()){
 				Map.Entry pairs = (Map.Entry)it.next();
 				currentNode = (Node)pairs.getValue();
+				//System.out.println("I am a node " + currentNode.getNodeId() + " and my neighbors are " + currentNode.getNeighborIds().toString());
 				if (currentNode.isNodeInfected()){
 					//heal or not
+					double prob = Math.random();
+					if (prob<delta){
+						currentNode.setNodeInfected(false);
+						numberOfInfected--;
+						net.storeNode(currentNode);
+					}
+					//System.out.println("I am a node " + currentNode.getNodeId() + " and I infected #####################");
 				}else{
+					int num = currentNode.neighborIds.size();
+					int id =0;
+					int infCount =0;
+					for (int n = 0; n<num;n++ ){
+						id = currentNode.neighborIds.get(n);
+						
+						if( net.getNodeMap().get(id).isNodeInfected() == true){
+							infCount++;
+						}
+					}
+					double prob = Math.random();
+					double multiProb = 1-Math.pow((1-beta),infCount);
+					if (prob < multiProb){
+						currentNode.setNodeInfected(true);
+						numberOfInfected++;
+						net.storeNode(currentNode);
+					}
+					//System.out.println("I am a node " + currentNode.getNodeId() + " and I healthy");
+					
 					//1. check neighbors
 					//2. get infected or not
 				}
@@ -80,8 +116,21 @@ public class Simulator {
 
 
 			}
-		}
+			System.out.println("Number of infected nodes is " + numberOfInfected);
+		}//end of for simulation steps
+		
 
 	}
+	
+	private static void setInfectedNodes(Network net){
+		//This is just to test
+		for(int i = 0; i<20;i++){
+			Node current = net.getNodeMap().get(i);
+			current.setNodeInfected(true);
+			numberOfInfected++;
+			net.storeNode(current);
+		}
+	}
+	
 
 }

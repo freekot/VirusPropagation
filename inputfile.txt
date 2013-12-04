@@ -1,0 +1,5 @@
+FileName = amazon.graph.small
+Transmission_Probability = 0.20
+Healing_Probability = 0.70
+Vaccines = 200
+Simulation_Steps = 10
