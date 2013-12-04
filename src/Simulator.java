@@ -1,6 +1,9 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class Simulator {
 	
@@ -30,7 +33,7 @@ public class Simulator {
 		//Populate the Adjacency Matrix and create "Nodes"
 		Network net = new Network (netFileName);
 		
-		//runSimulation(net);
+		runSimulation(net);
 
 	}
 	
@@ -59,7 +62,26 @@ public class Simulator {
 	}
 	
 	private static void runSimulation(Network net){
-		
+		Node currentNode;
+
+		for (int i = 0; i<numberOfSteps; i++){
+			HashMap<Integer, Node> current = net.getNodeMap();
+			Iterator it  = current.entrySet().iterator();
+			while (it.hasNext()){
+				Map.Entry pairs = (Map.Entry)it.next();
+				currentNode = (Node)pairs.getValue();
+				if (currentNode.isNodeInfected()){
+					//heal or not
+				}else{
+					//1. check neighbors
+					//2. get infected or not
+				}
+				
+
+
+			}
+		}
+
 	}
 
 }
