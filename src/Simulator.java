@@ -1,5 +1,7 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -77,7 +79,12 @@ public class Simulator {
 	}
 	
 	private static void runSimulation(Network net){
+		
+		int[] infected = new int[numberOfSteps+1];
+		
+		
 		Node currentNode;
+		infected[0]= numberOfInfected;
 		for (int i = 0; i<numberOfSteps; i++){
 			HashMap<Integer, Node> current = net.getNodeMap();
 			Iterator it  = current.entrySet().iterator();
@@ -122,9 +129,34 @@ public class Simulator {
 
 			}
 			System.out.println("Number of infected nodes is " + numberOfInfected);
+			infected[i+1]= numberOfInfected;
+			
+			
+			
+			
 		}//end of for simulation steps
+		writeInfected(infected);
+		
+		
 		
 
+	}
+	
+	public static void writeInfected(int[] infected){
+		try{
+			FileWriter fstream = new FileWriter("output.txt", true);
+			BufferedWriter togo = new BufferedWriter(fstream);
+			for (int i = 0; i< infected.length; i++){
+				
+				togo.write(infected[i]+ "\n"   );
+			}
+
+			
+			togo.close();
+			
+		}catch (Exception e){//Catch exception if any
+			  System.err.println("Error1: " + e.getMessage());
+		}
 	}
 	
 
