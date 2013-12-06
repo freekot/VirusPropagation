@@ -1,4 +1,4 @@
-FileName = amazon.graph.small
+FileName = static.network
 Transmission_Probability = 0.20
 Healing_Probability = 0.70
 Vaccines = 200

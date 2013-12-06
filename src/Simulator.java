@@ -15,6 +15,8 @@ public class Simulator {
 	static double numberOfVaccines;
 	private static BufferedReader in;
 	private static int numberOfInfected=0;
+	private static final int NUM_IMM_NODES = 200;
+	private static final double INF_FRACTION = 0.1;
 	
 	/**
 	 * @param args
@@ -33,9 +35,12 @@ public class Simulator {
 		
 		//Populate the Adjacency Matrix and create "Nodes"
 		Network net = new Network (netFileName);
-		
+		long start = System.currentTimeMillis();
 		//net.printEigenvalues();
-		setInfectedNodes(net);
+		long finish = System.currentTimeMillis();
+		long time = finish - start;
+		System.out.println("It took " + time/1000 + " seconds to get eigenvalues");
+		net.seedInfection(INF_FRACTION, NUM_IMM_NODES);
 		runSimulation(net);
 		
 		
@@ -122,15 +127,7 @@ public class Simulator {
 
 	}
 	
-	private static void setInfectedNodes(Network net){
-		//This is just to test
-		for(int i = 0; i<20;i++){
-			Node current = net.getNodeMap().get(i);
-			current.setNodeInfected(true);
-			numberOfInfected++;
-			net.storeNode(current);
-		}
-	}
+
 	
 
 }

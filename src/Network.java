@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Random;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.EigenDecomposition;
@@ -124,8 +126,8 @@ public class Network {
 		nodeMap.put(cur.getNodeId(), cur);
 	}
 	
-public void printEigenvalues(){
-		
+	public void printEigenvalues(){
+
 		//RealMatrix matrix = MatrixUtils.createRealMatrix(mat);
 		EigenDecomposition ed = new EigenDecomposition(adjacencyMatrix);
 		double [] eigValues = ed.getRealEigenvalues();
@@ -133,6 +135,21 @@ public void printEigenvalues(){
 			System.out.println("eigValue [" + i + "] = " + eigValues[i] );
 		}
 	}
+	
+	public void seedInfection(double frac, int num_imm){
+		Random generator = new Random();
+		Node randomValue;
+		double num_inf = frac*(numberOfNodes + num_imm);
+		for (int i = 0; i<num_inf; i++){
+			
+			Map.Entry[] entries = (Entry[]) nodeMap.entrySet().toArray();
+			randomValue = (Node) entries[generator.nextInt(entries.length)].getValue();
+			randomValue.setNodeInfected(true);
+			nodeMap.put(randomValue.getNodeId(), randomValue);
+		}
+		
+	}
+	
 
 
 }
