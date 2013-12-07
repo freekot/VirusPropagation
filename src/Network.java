@@ -136,16 +136,20 @@ public class Network {
 		}
 	}
 	
-	public void seedInfection(double frac, int num_imm){
+	public void seedInfection(double numToInfect){
 		Random generator = new Random();
 		Node randomValue;
-		double num_inf = frac*(numberOfNodes + num_imm);
-		for (int i = 0; i<num_inf; i++){
+		
+		for (int i = 0; i<numToInfect; i++){
 			
-			Map.Entry[] entries = (Entry[]) nodeMap.entrySet().toArray();
-			randomValue = (Node) entries[generator.nextInt(entries.length)].getValue();
+			Object[] values = nodeMap.values().toArray();
+			randomValue = (Node)values[generator.nextInt(values.length)];
+			
+//			Map.Entry[] entries = nodeMap.entrySet().toArray();
+//			randomValue = (Node) entries[generator.nextInt(entries.length)].getValue();
 			randomValue.setNodeInfected(true);
 			nodeMap.put(randomValue.getNodeId(), randomValue);
+			Simulator.numberOfInfected++;
 		}
 		
 	}

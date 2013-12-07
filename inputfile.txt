@@ -1,5 +1,6 @@
 FileName = static.network
-Transmission_Probability = 0.20
-Healing_Probability = 0.70
+Transmission_Probability = 0.2
+Healing_Probability = 0.7
 Vaccines = 200
 Simulation_Steps = 10
+number_to_infect = 572

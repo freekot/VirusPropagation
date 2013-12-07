@@ -16,9 +16,12 @@ public class Simulator {
 	static double delta;
 	static double numberOfVaccines;
 	private static BufferedReader in;
-	private static int numberOfInfected=0;
+	public static int numberOfInfected;
 	private static final int NUM_IMM_NODES = 200;
 	private static final double INF_FRACTION = 0.1;
+	private static int numToInfect;
+	static int[] infected;
+	static int[] avinfected;
 	
 	/**
 	 * @param args
@@ -37,13 +40,30 @@ public class Simulator {
 		
 		//Populate the Adjacency Matrix and create "Nodes"
 		Network net = new Network (netFileName);
-		long start = System.currentTimeMillis();
+		//long start = System.currentTimeMillis();
 		//net.printEigenvalues();
-		long finish = System.currentTimeMillis();
-		long time = finish - start;
-		System.out.println("It took " + time/1000 + " seconds to get eigenvalues");
-		net.seedInfection(INF_FRACTION, NUM_IMM_NODES);
-		runSimulation(net);
+		//long finish = System.currentTimeMillis();
+		//long time = finish - start;
+		//System.out.println("It took " + time/1000 + " seconds to get eigenvalues");
+		infected = new int[numberOfSteps+1];
+		avinfected = new int[numberOfSteps+1];
+		
+		int reps = 10;
+		for (int i = 0; i<reps; i++){
+			numberOfInfected=0;
+			
+			net.seedInfection(numToInfect);
+			infected[0]=numberOfInfected;
+			avinfected[0]=infected[0];
+			System.out.println("Number of infected nodes is " + numberOfInfected);
+			
+			runSimulation(net);
+			for (int j = 1; j<avinfected.length; j++){
+				avinfected[j]=infected[j]/reps + avinfected[j];
+			}
+		}
+		
+		writeInfected(avinfected);
 		
 		
 
@@ -75,26 +95,38 @@ public class Simulator {
 		tokens = line.split(" ");
 		numberOfSteps = Integer.parseInt(tokens[2]);
 		
+		//Read number of infected nodes
+		line = in.readLine();
+		tokens = line.split(" ");
+		numToInfect = Integer.parseInt(tokens[2]);
+		
 		in.close();
 	}
 	
 	private static void runSimulation(Network net){
 		
-		int[] infected = new int[numberOfSteps+1];
 		
+		
+		double multiProb;
+		double prob = Math.random();
 		
 		Node currentNode;
-		infected[0]= numberOfInfected;
+		
 		for (int i = 0; i<numberOfSteps; i++){
+			int countingNodes =0;
 			HashMap<Integer, Node> current = net.getNodeMap();
 			Iterator it  = current.entrySet().iterator();
+			
 			while (it.hasNext()){
+				countingNodes++;
+				
+				
 				Map.Entry pairs = (Map.Entry)it.next();
 				currentNode = (Node)pairs.getValue();
 				//System.out.println("I am a node " + currentNode.getNodeId() + " and my neighbors are " + currentNode.getNeighborIds().toString());
 				if (currentNode.isNodeInfected()){
 					//heal or not
-					double prob = Math.random();
+					prob = Math.random();
 					if (prob<delta){
 						currentNode.setNodeInfected(false);
 						numberOfInfected--;
@@ -112,8 +144,9 @@ public class Simulator {
 							infCount++;
 						}
 					}
-					double prob = Math.random();
-					double multiProb = 1-Math.pow((1-beta),infCount);
+					//System.out.println("--------------------number of infected neighbors is = " + infCount);
+					prob = Math.random();
+					multiProb = 1-Math.pow((1-beta),infCount);
 					if (prob < multiProb){
 						currentNode.setNodeInfected(true);
 						numberOfInfected++;
@@ -125,17 +158,20 @@ public class Simulator {
 					//2. get infected or not
 				}
 				
+				
 
 
-			}
+			} //end of while
 			System.out.println("Number of infected nodes is " + numberOfInfected);
 			infected[i+1]= numberOfInfected;
+			//System.out.println("number of nodes is "  + countingNodes);
+			
 			
 			
 			
 			
 		}//end of for simulation steps
-		writeInfected(infected);
+		
 		
 		
 		
