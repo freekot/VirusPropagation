@@ -154,6 +154,20 @@ public class Network {
 		
 	}
 	
+	public void reset(){
+		
+		Iterator it  = nodeMap.entrySet().iterator();
+		Node currentNode;
+		
+		while (it.hasNext()){
+		
+			Map.Entry pairs = (Map.Entry)it.next();
+			currentNode = (Node)pairs.getValue();
+			currentNode.setNodeInfected(false);
+			nodeMap.put(currentNode.getNodeId(), currentNode);
+		}
+	}
+	
 
 
 }

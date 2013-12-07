@@ -61,6 +61,7 @@ public class Simulator {
 			for (int j = 1; j<avinfected.length; j++){
 				avinfected[j]=infected[j]/reps + avinfected[j];
 			}
+			net.reset();
 		}
 		
 		writeInfected(avinfected);
@@ -114,6 +115,7 @@ public class Simulator {
 		
 		for (int i = 0; i<numberOfSteps; i++){
 			int countingNodes =0;
+			int countingInfectedNodes =0;
 			HashMap<Integer, Node> current = net.getNodeMap();
 			Iterator it  = current.entrySet().iterator();
 			
@@ -124,7 +126,9 @@ public class Simulator {
 				Map.Entry pairs = (Map.Entry)it.next();
 				currentNode = (Node)pairs.getValue();
 				//System.out.println("I am a node " + currentNode.getNodeId() + " and my neighbors are " + currentNode.getNeighborIds().toString());
+				
 				if (currentNode.isNodeInfected()){
+					countingInfectedNodes++;
 					//heal or not
 					prob = Math.random();
 					if (prob<delta){
@@ -162,7 +166,7 @@ public class Simulator {
 
 
 			} //end of while
-			System.out.println("Number of infected nodes is " + numberOfInfected);
+			//System.out.println("Number of infected nodes is " + numberOfInfected + " The actual number of infected nodes was " + countingInfectedNodes);
 			infected[i+1]= numberOfInfected;
 			//System.out.println("number of nodes is "  + countingNodes);
 			
